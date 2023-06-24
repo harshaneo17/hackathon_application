@@ -10,19 +10,21 @@ import logging as log
 
 from transformers import DonutProcessor, VisionEncoderDecoderModel
 
+# sets the basic logging level as info
+log.basicConfig(level=log.INFO)
+
 processor = DonutProcessor.from_pretrained("naver-clova-ix/donut-base-finetuned-docvqa")
 model = VisionEncoderDecoderModel.from_pretrained("naver-clova-ix/donut-base-finetuned-docvqa")
 
 def read_image(file) -> Image.Image:
     """ This function takes file and converts it into PIL image format """
-    pil_image = Image.open(BytesIO(file)).convert('RGB')
+    opened_file = Image.open(BytesIO(file)).convert('RGB')
     log.info('_____LOADING IMAGE______')
-    return pil_image
+    return opened_file
 
-def get_answer(filename, question, model, processor):
+def get_answer(image, question, model, processor):
 
-    image = read_image(filename)
-
+    
     pixel_values = processor(image, return_tensors="pt").pixel_values
     
     prompt = f"<s_docvqa><s_question>{question}</s_question><s_answer>"
@@ -30,6 +32,7 @@ def get_answer(filename, question, model, processor):
 
     device = "cuda" if torch.cuda.is_available() else "cpu"
     model.to(device)
+    log.info(f'device is {device}')
 
     outputs = model.generate(pixel_values.to(device),
                                decoder_input_ids=decoder_input_ids.to(device),
@@ -60,6 +63,7 @@ def show_image(image):
     img = np.asarray(img)
     plt.figure(figsize=(7,7))
     plt.imshow(img)
+
 
 
 

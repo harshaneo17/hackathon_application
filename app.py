@@ -14,7 +14,7 @@ async def create_file(file: bytes = File(...)): #type hinting is important https
 async def main(file: bytes = File(...)): #fastAPI uses pythons type hinting
     # read image
     imagem = read_image(file)
-    show_image(file)
+    show_image(imagem)
     question = "What is the total or balance?"
     answer, score = get_answer(imagem, question, model, processor)
     # transform and get result 
