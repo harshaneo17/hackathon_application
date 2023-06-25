@@ -1,21 +1,33 @@
 from PIL import Image
-from modelpredict import read_image,get_answer,model,processor,show_image
-from fastapi import FastAPI, File, UploadFile
+from modelpredict import read_image, get_answer, model, processor, show_image
+from fastapi import FastAPI, File, UploadFile, Request, Form
+from fastapi.responses import HTMLResponse
+from fastapi.templating import Jinja2Templates
 from io import BytesIO
 
-app = FastAPI() #load fastapi
+app = FastAPI()
+templates = Jinja2Templates(directory="templates")
 
 
 @app.post("/files/")
-async def create_file(file: bytes = File(...)): #type hinting is important https://www.tutorialspoint.com/fastapi/fastapi_type_hints.htm 
+async def create_file(file: bytes = File(...)):
     return {"file_size": len(file)}
-    
+
+
 @app.post("/uploadfile/")
-async def main(file: bytes = File(...)): #fastAPI uses pythons type hinting
-    # read image
+async def main(request: Request, file: bytes = File(...), question: str = Form(...)):
+    # Read image
     imagem = read_image(file)
     show_image(imagem)
-    question = "What is the total or balance?"
     answer, score = get_answer(imagem, question, model, processor)
-    # transform and get result 
-    return answer,score
+    # Transform and get result
+    return templates.TemplateResponse("result.html", {"request": request, "answer": answer["answer"]})
+
+
+@app.get("/", response_class=HTMLResponse)
+async def home(request: Request):
+    return templates.TemplateResponse("index.html", {"request": request})
+
+
+if __name__ == "__main__":
+    uvicorn.run(app, host="0.0.0.0", port=8000)
