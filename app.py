@@ -3,6 +3,7 @@ from modelpredict import read_image, get_answer, model, processor, show_image
 from fastapi import FastAPI, File, UploadFile, Request, Form
 from fastapi.responses import HTMLResponse
 from fastapi.templating import Jinja2Templates
+from database import save_question_answer
 from io import BytesIO
 
 app = FastAPI()
@@ -20,7 +21,9 @@ async def main(request: Request, file: bytes = File(...), question: str = Form(.
     imagem = read_image(file)
     show_image(imagem)
     answer, score = get_answer(imagem, question, model, processor)
-    # Transform and get result
+    # Extract the image name from the file object
+    save_question_answer(question, answer["answer"])
+    # Render result
     return templates.TemplateResponse("result.html", {"request": request, "answer": answer["answer"]})
 
 

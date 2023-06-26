@@ -17,6 +17,20 @@
         max-width: 150px;
         margin-bottom: 20px;
       }
+      .drop-area {
+        border: 2px dashed #ccc;
+        height: 200px;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        cursor: pointer;
+      }
+      .drop-area.active {
+        background-color: #f7f7f7;
+      }
+      .drop-area p {
+        margin: 0;
+      }
     </style>
     <script>
       function showQuestionForm() {
@@ -33,6 +47,30 @@
       function toggleInstructions() {
         var instructions = document.getElementById("instructions");
         instructions.classList.toggle("show");
+      }
+      
+      function handleDrop(e) {
+        e.preventDefault();
+        var fileInput = document.getElementById("fileInput");
+        fileInput.files = e.dataTransfer.files;
+        showQuestionForm();
+      }
+      
+      function handleDragOver(e) {
+        e.preventDefault();
+        var dropArea = document.getElementById("dropArea");
+        dropArea.classList.add("active");
+      }
+      
+      function handleDragLeave(e) {
+        e.preventDefault();
+        var dropArea = document.getElementById("dropArea");
+        dropArea.classList.remove("active");
+      }
+      
+      function handleFileChange() {
+        var fileInput = document.getElementById("fileInput");
+        showQuestionForm();
       }
     </script>
   </head>
@@ -56,12 +94,15 @@
     </nav>
 
     <div class="container">
-      <!-- <img src="\\logo.png" alt="Logo" class="logo"/> -->
+      <!-- <img src="C:\Users\ASUS\Documents\cpp_projects\hackathon_application\templates\logo.png" alt="Logo" class="logo"/> -->
       <h1>PomegAI</h1>
       <h2>Upload an Image</h2>
+      <div id="dropArea" class="drop-area" ondrop="handleDrop(event)" ondragover="handleDragOver(event)" ondragleave="handleDragLeave(event)">
+        <p>Drag and drop your image here</p>
+      </div>
       <form action="/uploadfile/" method="post" enctype="multipart/form-data">
         <div class="form-group">
-          <input type="file" class="form-control-file" name="file" id="fileInput" onchange="showQuestionForm()">
+          <input type="file" class="form-control-file" name="file" id="fileInput" onchange="handleFileChange()">
         </div>
         <div id="questionForm" class="form-group hidden">
           <label for="question">Question:</label>
@@ -74,7 +115,7 @@
       <div class="collapse" id="instructions">
         <div class="card card-body">
           <h3>Instructions:</h3>
-          <p>1. Click the 'Choose File' button to select an image file.</p>
+          <p>1. Drag and drop an image file into the designated area or click the 'Choose File' button.</p>
           <p>2. Wait for the processing to complete.</p>
           <p>3. Ask the question you would like PomegAI to answer and click upload.</p>
           <p>4. The result will be displayed after processing the request.</p>
