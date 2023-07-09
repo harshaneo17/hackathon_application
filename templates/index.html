@@ -86,8 +86,8 @@
     <script src="https://cdn.jsdelivr.net/npm/bootstrap@4.5.2/dist/js/bootstrap.min.js"></script>
     <script>
       function showQuestionForm() {
-        var fileInput = document.getElementById("fileInput");
-        var questionForm = document.getElementById("questionForm");
+        let fileInput = document.getElementById("fileInput");
+        let questionForm = document.getElementById("questionForm");
         
         if (fileInput.value !== "") {
           questionForm.classList.remove("hidden");
@@ -97,31 +97,31 @@
       }
       
       function toggleInstructions() {
-        var instructions = document.getElementById("instructions");
+        let instructions = document.getElementById("instructions");
         instructions.classList.toggle("show");
       }
       
       function handleDrop(e) {
         e.preventDefault();
-        var fileInput = document.getElementById("fileInput");
+        let fileInput = document.getElementById("fileInput");
         fileInput.files = e.dataTransfer.files;
         showQuestionForm();
       }
       
       function handleDragOver(e) {
         e.preventDefault();
-        var dropArea = document.getElementById("dropArea");
+        let dropArea = document.getElementById("dropArea");
         dropArea.classList.add("active");
       }
       
       function handleDragLeave(e) {
         e.preventDefault();
-        var dropArea = document.getElementById("dropArea");
+        let dropArea = document.getElementById("dropArea");
         dropArea.classList.remove("active");
       }
       
       function handleFileChange() {
-        var fileInput = document.getElementById("fileInput");
+        let fileInput = document.getElementById("fileInput");
         showQuestionForm();
       }
     </script>
