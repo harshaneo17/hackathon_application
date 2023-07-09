@@ -7,7 +7,7 @@ from database import save_question_answer
 from io import BytesIO
 
 app = FastAPI()
-templates = Jinja2Templates(directory="templates")
+templates = Jinja2Templates(directory="templates") #render jinja templates
 
 
 @app.post("/files/")
@@ -17,6 +17,7 @@ async def create_file(file: bytes = File(...)):
 
 @app.post("/uploadfile/")
 async def main(request: Request, file: bytes = File(...), question: str = Form(...)):
+    """Uploaded file is read and a question is passed as prompt"""
     # Read image
     imagem = read_image(file)
     show_image(imagem)
@@ -29,11 +30,13 @@ async def main(request: Request, file: bytes = File(...), question: str = Form(.
 
 @app.get("/", response_class=HTMLResponse)
 async def home(request: Request):
+    """Route to home page"""
     return templates.TemplateResponse("index.html", {"request": request})
 
 
 @app.get("/about", response_class=HTMLResponse)
 async def about(request: Request):
+    """Route to about page"""
     return templates.TemplateResponse("about.html", {"request": request})
 
 

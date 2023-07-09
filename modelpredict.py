@@ -13,22 +13,22 @@ from transformers import DonutProcessor, VisionEncoderDecoderModel
 # sets the basic logging level as info
 log.basicConfig(level=log.INFO)
 
-processor = DonutProcessor.from_pretrained("naver-clova-ix/donut-base-finetuned-docvqa")
-model = VisionEncoderDecoderModel.from_pretrained("naver-clova-ix/donut-base-finetuned-docvqa")
+processor = DonutProcessor.from_pretrained("naver-clova-ix/donut-base-finetuned-docvqa") #get donu processor from pretrained naver-clova
+model = VisionEncoderDecoderModel.from_pretrained("naver-clova-ix/donut-base-finetuned-docvqa") #get vision encoder function from pretrained
 
 def read_image(file) -> Image.Image:
     """ This function takes file and converts it into PIL image format """
-    opened_file = Image.open(BytesIO(file)).convert('RGB')
+    opened_file = Image.open(BytesIO(file)).convert('RGB') #a function to open the file and convert RGB tensor
     log.info('_____LOADING IMAGE______')
     return opened_file
 
 def get_answer(image, question, model, processor):
 
     
-    pixel_values = processor(image, return_tensors="pt").pixel_values
+    pixel_values = processor(image, return_tensors="pt").pixel_values 
     
-    prompt = f"<s_docvqa><s_question>{question}</s_question><s_answer>"
-    decoder_input_ids = processor.tokenizer(prompt, add_special_tokens=False, return_tensors="pt")["input_ids"]
+    prompt = f"<s_docvqa><s_question>{question}</s_question><s_answer>" #prompt string
+    decoder_input_ids = processor.tokenizer(prompt, add_special_tokens=False, return_tensors="pt")["input_ids"] #tokenizes the prompt
 
     device = "cuda" if torch.cuda.is_available() else "cpu"
     model.to(device)
@@ -44,7 +44,7 @@ def get_answer(image, question, model, processor):
                                num_beams=3,
                                bad_words_ids=[[processor.tokenizer.unk_token_id]],
                                return_dict_in_generate=True,
-                               output_scores=True)
+                               output_scores=True) #model output
     
     seq = processor.batch_decode(outputs.sequences)[0]
     seq = seq.replace(processor.tokenizer.eos_token, "").replace(processor.tokenizer.pad_token, "")
@@ -59,6 +59,7 @@ def resultsjson(answer,score) -> list:
     return response
 
 def show_image(image):
+    """Function to resize and show the image"""
     img = image.resize((600,600))
     img = np.asarray(img)
     plt.figure(figsize=(7,7))
