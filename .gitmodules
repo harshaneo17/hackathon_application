@@ -1,0 +1,3 @@
+[submodule "donut_private"]
+	path = donut_private
+	url = https://huggingface.co/harshaneo17/donut_private
